@@ -58,6 +58,47 @@ def edit_values():
     if ch.lower() in ["y", "yes", "1", 1]:
         edit_values()
 
+def plot_visualizer(df: pd.DataFrame, visualizer_type: str):
+    if visualizer_type.lower() == "bar":
+        df.plot(kind="bar", x="GENEID", figsize=(10, 6))
+        plt.title("Bar Chart: Gene Expression under Different Treatments")
+        plt.ylabel("Gene Expression Level")
+        plt.xlabel("Genes")
+        plt.xticks(rotation=45)
+        plt.show()
+    elif visualizer_type.lower() == "scatter":
+        df.plot(kind="scatter", x="Control", y="Chemotherapy", s=50, figsize=(10, 6))
+        plt.title("Scatter Plot: Control vs. Chemotherapy")
+        plt.xlabel("Control")
+        plt.ylabel("Chemotherapy")
+        plt.show()
+    elif visualizer_type.lower() == "line":
+        df.set_index("GENEID").T.plot(marker="o", figsize=(10, 6))
+        plt.title("Line Plot: Gene Expression under Different Treatments")
+        plt.ylabel("Gene Expression Level")
+        plt.xlabel("Treatments")
+        plt.xticks(rotation=45)
+        plt.legend(title="Genes", bbox_to_anchor=(1, 1), loc="upper left")
+        plt.show()
+    elif visualizer_type.lower() == "box":
+        df.boxplot(column=["Control", "Chemotherapy", "Immunotherapy", "Targeted"], figsize=(10, 6))
+        plt.title("Box Plot: Gene Expression under Different Treatments")
+        plt.ylabel("Gene Expression Level")
+        plt.show()
+    elif visualizer_type.lower() == "pie":
+        df.sum().drop("GENEID").plot.pie(autopct='%1.1f%%', figsize=(8, 8))
+        plt.title("Pie Chart: Total Gene Expression across Treatments")
+        plt.show()
+    else:
+        print(f"{red_code}Invalid visualizer type. Please choose from 'bar', 'scatter', 'line', 'box', or 'pie'.{reset_code}")
+
+
+def visualize_data_menu():
+    print("\nSelect the type of visualizer:")
+    print("1. Bar Chart\n2. Scatter Plot\n3. Line Plot\n4. Box Plot\n5. Pie Chart")
+    visualizer_type = input("Enter the number of your choice: ")
+    plot_visualizer(geneDF, visualizer_type)
+
 
 def chMkr(lvl: int):
     if lvl == 1:
@@ -69,15 +110,7 @@ def chMkr(lvl: int):
             print("\n" + f"{cyan_code}={reset_code}" * 110)
         elif ch.lower() in ["2", "graph", "visualize", "plot"]:
             print("\nPlotting data")
-            geneDF.set_index("GENEID").T.plot(marker="o", figsize=(10, 6))
-            plt.title("Gene Expression under Different Treatments")
-            plt.ylabel("Gene Expression Level")
-            plt.xlabel("Treatments")
-            plt.xticks(rotation=45)
-            plt.legend(title="Genes", bbox_to_anchor=(1, 1), loc="upper left")
-            plt.show()
-            print(f"{green_code}Plotting successful.")
-            print("\n" + f"{cyan_code}={reset_code}" * 110)
+            visualize_data_menu()
         elif ch.lower() in ["3", "manipulate", "change", "alter"]:
             chMkr(2)
         elif ch.lower() in ["4", "exit", "quit", "bye"]:
